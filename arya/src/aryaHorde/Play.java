@@ -1,5 +1,9 @@
 package aryaHorde;
 
+import java.util.Collection;
+
+//import org.lwjgl.input.Mouse;
+
 import org.newdawn.slick.*;
 import org.newdawn.slick.state.*;
 
@@ -18,8 +22,7 @@ public class Play extends BasicGameState implements GameConstants {
 	float sideCollisionShift;
 	float sideCollision;
 	float bottomCollision;
-	
-	
+	Collection<BasicBullet> playerProjectiles;
 	
 	public Play(int state) {
 		
@@ -29,12 +32,7 @@ public class Play extends BasicGameState implements GameConstants {
 	public void init(GameContainer container, StateBasedGame game)
 			throws SlickException {
 		
-		//Image back = new Image("res/bucky/buckysBack.png");
-		//Image backFlipped = back.getFlippedCopy(false, true);
-		//Image left = new Image("res/bucky/buckysLeft.png");
-		//Image leftFlipped = left.getFlippedCopy(false, true);
-		
-		worldMap = new Image("res/bucky/world.png");
+		worldMap = new Image("res/background/oneLifeBG.png");
 		Image[] walkUp = {new Image("res/bucky/buckysBack.png"), 
 				new Image("res/bucky/buckysBack.png")};
 		Image[] walkDown = {new Image("res/bucky/buckysFront.png"), 
@@ -55,6 +53,8 @@ public class Play extends BasicGameState implements GameConstants {
 		bottomCollisionShift = (-1 * worldMap.getHeight() + CENTERED_Y * 2 + movingDown.getHeight());
 		sideCollision = (CENTERED_X * 2) - movingRight.getWidth();
 		bottomCollision = (CENTERED_Y * 2) - movingDown.getHeight();
+		
+		
 	}
 
 	@Override
@@ -66,6 +66,13 @@ public class Play extends BasicGameState implements GameConstants {
 				+ " y: " + cameraY, 20, HEIGHT - 20);
 		g.drawString("Player is at x: " +  playerX 
 				+ " y: " + playerY, 20, HEIGHT - 40);
+		
+		/* if(playerProjectiles != null) {
+			for (BasicBullet bullet : playerProjectiles) {
+				bullet.draw(g);
+			}
+		} 
+		*/
 		
 		if(quitGame) {
 			g.drawString("Resume (R)", 250, 100);
@@ -81,6 +88,8 @@ public class Play extends BasicGameState implements GameConstants {
 	public void update(GameContainer container, StateBasedGame game, int delta)
 			throws SlickException {
 		Input input = container.getInput();
+		//int posX = Mouse.getX();
+		//int posY = Mouse.getY();
 		
 		if(input.isKeyDown(Input.KEY_W)) {						//Move up
 			player = movingUp;
@@ -152,13 +161,24 @@ public class Play extends BasicGameState implements GameConstants {
 					playerX += delta * .1f;
 					cameraX += delta * .1f;
 				} 
-			} else {															//Move Player
+			} else {													//Move Player
 				playerX += delta * .1f;
-				if (playerX >= sideCollision) {		//Lock player
+				if (playerX >= sideCollision) {							//Lock player
 					playerX -= delta * .1f;
 				}
 			}
 		}
+		
+		/*if (playerProjectiles != null) {
+			for(BasicBullet bullet : playerProjectiles) {
+				bullet.update(delta);
+			}
+		}
+		
+		if(input.isMouseButtonDown(0)) {
+			playerProjectiles.add(new BasicBullet(playerX, playerY, Math.abs(posX - WIDTH), Math.abs(posY - HEIGHT)));
+		}
+		*/
 	}
 
 	@Override
