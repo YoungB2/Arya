@@ -18,15 +18,15 @@ public class BasicBullet {
 		yPos = y1;
 		
 		if (Math.abs(x2) > Math.abs(x1)) {
-			xVelocity = 1;
+			xVelocity = -1;
 		} else { 
-			xVelocity = -1; 
+			xVelocity = +1; 
 		}
 		
 		if (Math.abs(y2) > Math.abs(y1)) {
-			yVelocity = 1;
-		} else {
 			yVelocity = -1;
+		} else {
+			yVelocity = +1;
 		}
 	}
 	

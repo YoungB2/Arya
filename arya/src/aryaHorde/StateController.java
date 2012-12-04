@@ -10,10 +10,6 @@ import org.newdawn.slick.state.*;
  * @version 1.0
  */
 public class StateController extends StateBasedGame implements GameConstants {
-
-	public static final String gamename = "Project Arya";
-	public static final int MENU = 0;
-	public static final int PLAY = 1;
 	
 	public StateController(String name) {
 		super(name);
@@ -30,15 +26,16 @@ public class StateController extends StateBasedGame implements GameConstants {
 	}
 	
 	/**
-	 * 
+	 * The entry point for the program, starts and runs the start menu
 	 * @param args		the arguments passed to the program
 	 */
 	public static void main(String[] args) {
 		AppGameContainer appgc;
 		
 		try {
-			appgc = new AppGameContainer(new StateController(gamename));
+			appgc = new AppGameContainer(new StateController(GAME_NAME));
 			appgc.setDisplayMode(WIDTH, HEIGHT, false);
+			appgc.setTargetFrameRate(FRAME_RATE);
 			appgc.start();
 		} catch(SlickException e) {
 			e.printStackTrace();

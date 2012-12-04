@@ -14,9 +14,10 @@ public class Menu extends BasicGameState {
 
 	Image playButton;
 	Image exitButton;
+	private int ID;
 		
 	public Menu(int state) {
-		
+		ID = state;
 	}
 	
 	
@@ -77,7 +78,7 @@ public class Menu extends BasicGameState {
 
 	@Override
 	public int getID() {
-		return 0;
+		return ID;
 	}
 
 }

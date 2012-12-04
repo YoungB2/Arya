@@ -1,5 +1,7 @@
 package aryaHorde;
 
+import org.newdawn.slick.Graphics;
+
 public abstract class Enemy {
 	
 	
@@ -15,7 +17,15 @@ public abstract class Enemy {
 		yPosition = y;
 	}
 	
-	protected void initGraphics() {
+	protected void initGraphics() {			//Prepares unit's polygon
+		
+	}
+	
+	protected void draw(Graphics g) {
+		
+	}
+	
+	protected void update(int delta) {
 		
 	}
 }

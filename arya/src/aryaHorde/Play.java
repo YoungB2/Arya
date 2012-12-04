@@ -1,19 +1,24 @@
 package aryaHorde;
 
-import java.util.Collection;
+import java.util.ArrayList;
 
-//import org.lwjgl.input.Mouse;
+import org.lwjgl.input.Mouse;
 
 import org.newdawn.slick.*;
 import org.newdawn.slick.state.*;
 
 public class Play extends BasicGameState implements GameConstants {
 
+	//TODO assign public/private field modifiers
+	
+	int ID;
+	
 	Animation player, movingUp, movingDown, movingLeft, movingRight;
 	Image worldMap;
 	boolean quitGame = false;
 	//how long each image will last (200 = 2/10 of a second)
 	int[] duration = {200, 200};
+	private int score;
 	float cameraX = 0;
 	float cameraY = 0;
 	float playerX = WIDTH/2;
@@ -22,15 +27,19 @@ public class Play extends BasicGameState implements GameConstants {
 	float sideCollisionShift;
 	float sideCollision;
 	float bottomCollision;
-	Collection<BasicBullet> playerProjectiles;
+	ArrayList<BasicBullet> playerProjectiles;
+	
+	String mouse;
 	
 	public Play(int state) {
-		
+		ID = state;
 	}
 	
 	@Override
 	public void init(GameContainer container, StateBasedGame game)
 			throws SlickException {
+		
+		score = 0;
 		
 		worldMap = new Image("res/background/oneLifeBG.png");
 		Image[] walkUp = {new Image("res/bucky/buckysBack.png"), 
@@ -54,7 +63,7 @@ public class Play extends BasicGameState implements GameConstants {
 		sideCollision = (CENTERED_X * 2) - movingRight.getWidth();
 		bottomCollision = (CENTERED_Y * 2) - movingDown.getHeight();
 		
-		
+		playerProjectiles = new ArrayList<BasicBullet>();
 	}
 
 	@Override
@@ -66,13 +75,15 @@ public class Play extends BasicGameState implements GameConstants {
 				+ " y: " + cameraY, 20, HEIGHT - 20);
 		g.drawString("Player is at x: " +  playerX 
 				+ " y: " + playerY, 20, HEIGHT - 40);
+		g.drawString(mouse, 20, HEIGHT - 60);
 		
-		/* if(playerProjectiles != null) {
+		g.drawString("SCORE: " + score, 10, 30);
+		
+		if(playerProjectiles != null) {
 			for (BasicBullet bullet : playerProjectiles) {
 				bullet.draw(g);
 			}
 		} 
-		*/
 		
 		if(quitGame) {
 			g.drawString("Resume (R)", 250, 100);
@@ -88,8 +99,8 @@ public class Play extends BasicGameState implements GameConstants {
 	public void update(GameContainer container, StateBasedGame game, int delta)
 			throws SlickException {
 		Input input = container.getInput();
-		//int posX = Mouse.getX();
-		//int posY = Mouse.getY();
+		int posX = Mouse.getX();
+		int posY = HEIGHT - Mouse.getY();
 		
 		if(input.isKeyDown(Input.KEY_W)) {						//Move up
 			player = movingUp;
@@ -169,21 +180,26 @@ public class Play extends BasicGameState implements GameConstants {
 			}
 		}
 		
-		/*if (playerProjectiles != null) {
+		mouse = "The cursor is at x: " + posX + " and y: " + posY;
+		
+		if (playerProjectiles != null) {
 			for(BasicBullet bullet : playerProjectiles) {
 				bullet.update(delta);
 			}
 		}
 		
 		if(input.isMouseButtonDown(0)) {
-			playerProjectiles.add(new BasicBullet(playerX, playerY, Math.abs(posX - WIDTH), Math.abs(posY - HEIGHT)));
+			//TODO This is that pain in my neck
+			if(playerProjectiles != null) {
+				playerProjectiles.add(new BasicBullet(playerX, playerY, Math.abs(posX - WIDTH), Math.abs(posY - HEIGHT)));
+			}
 		}
-		*/
+		
 	}
 
 	@Override
 	public int getID() {
-		return 1;
+		return ID;
 	}
 
 }
