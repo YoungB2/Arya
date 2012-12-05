@@ -6,21 +6,31 @@ import org.newdawn.slick.state.*;
 
 /**
  * Defines the main menu mode of the application 
- * 
  * @author Bryan Young
- *
  */
 public class Menu extends BasicGameState {
 
+	/**The graphical resource for the play button*/
 	Image playButton;
+	/**The graphical resource for the exit button*/
 	Image exitButton;
+	/**The state ID for this game state*/
 	private int ID;
 		
+	/**
+	 * The constructor for this game state
+	 * @param state		The state ID
+	 */
 	public Menu(int state) {
 		ID = state;
 	}
 	
-	
+	/**
+	 * Initializes the variables and objects needed for the start of the game in this state
+	 * @param container		The GameContainer for the game
+	 * @param game			The StateBasedGame for this game
+	 * @throws SlickException
+	 */
 	@Override
 	public void init(GameContainer container, StateBasedGame game)
 			throws SlickException {
@@ -42,6 +52,13 @@ public class Menu extends BasicGameState {
 		g.drawImage(exitButton, exitButtonX1, exitButtonY1);
 	}
 
+	/**
+	 * Detects user mouse input to change the state of the game
+	 * @param container		The GameContainer for this state
+	 * @param game			The StateBasedGame for this state
+	 * @param delta			The rate of change for the update of this state
+	 * @throws SlickException
+	 */
 	@Override
 	public void update(GameContainer container, StateBasedGame game, int delta)
 			throws SlickException {
@@ -76,6 +93,10 @@ public class Menu extends BasicGameState {
 		}
 	}
 
+	/**
+	 * Gets the ID of this state
+	 * @return ID		The ID of this state
+	 */
 	@Override
 	public int getID() {
 		return ID;
