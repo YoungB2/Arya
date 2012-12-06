@@ -100,30 +100,10 @@ public class Play extends BasicGameState implements GameConstants {
 		worldMap = new Image(FIRST_MAP_RES);
 		
 		player = new Player();
-		//worldWidth = worldMap.getWidth();
-		//worldHeight = worldMap.getHeight();
-		
-		/* Image[] walkUp = {new Image("res/bucky/buckysBack.png"), 
-				new Image("res/bucky/buckysBack.png")};
-		Image[] walkDown = {new Image("res/bucky/buckysFront.png"), 
-				new Image("res/bucky/buckysFront.png")};
-		Image[] walkLeft = {new Image("res/bucky/buckysLeft.png"), 
-				new Image("res/bucky/buckysLeft.png")};
-		Image[] walkRight = {new Image("res/bucky/buckysRight.png"), 
-				new Image("res/bucky/buckysRight.png")};
-		
-		movingUp = new Animation(walkUp, duration, false);
-		movingDown = new Animation(walkDown, duration, false);
-		movingLeft = new Animation(walkLeft, duration, false);
-		movingRight = new Animation(walkRight, duration, false);
-		
-		player = movingDown;
-		playerWidth = movingDown.getWidth();
-		playerHeight = movingDown.getHeight();
-		*/
 		
 		sideCollisionShift = (-1 * worldMap.getWidth() + CENTERED_X * 2 + player.getRightSpriteWidth());
 		bottomCollisionShift = (-1 * worldMap.getHeight() + CENTERED_Y * 2 + player.getDownSpriteHeight());
+		
 		sideCollision = (CENTERED_X * 2) - player.getRightSpriteWidth();
 		bottomCollision = (CENTERED_Y * 2) - player.getDownSpriteHeight();
 		
@@ -142,14 +122,17 @@ public class Play extends BasicGameState implements GameConstants {
 	 * Initializes a Wanderer type enemy
 	 */
 	private void initWanderer() {
+		
 		initXVelocityRand = new Random();
 		initYVelocityRand = new Random();
 		xRand = new Random();
 		yRand = new Random();
+		
 		initXVelocity = initXVelocityRand.nextInt(2);
 		initYVelocity = initYVelocityRand.nextInt(2);
 		initX = xRand.nextInt(WIDTH);
-		initY = yRand.nextInt(HEIGHT);
+		initY = yRand.nextInt(HEIGHT)
+				;
 		wanderers.add(new Wanderer(initX, initY, initXVelocity, initYVelocity));
 		livingEnemies++;
 	}
