@@ -17,7 +17,7 @@ public class Wanderer extends Enemy {
 	private Polygon wandererTop, wandererRight, wandererBottom, wandererLeft;
 	
 	
-	//TODO fix the random spawning of the enemies in the default constructor
+	//TODO Generate random colors for each Wanderer object
 	
 	/**
 	 * Constructor that initializes the Wanderer enemy at the location
