@@ -26,7 +26,7 @@ public interface GameConstants {
 	public static final int FRAME_RATE = 60;
 	
 	/**Defines the maximum number of enemies in the game world*/
-	public static final int MAX_ENEMIES = 10;
+	public static final int MAX_ENEMIES = 0;
 	
 	
 	//Resource links
@@ -54,6 +54,7 @@ public interface GameConstants {
 	/**Defines the dynamic location of the player's right motion sprite*/
 	public static final String PLAYER_RIGHT_RES = "/res/bucky/buckysRight.png";
 	
+	
 	//State IDs
 	/**Defines the state ID for the primary game menu*/
 	public static final int MENU = 0;
@@ -63,6 +64,7 @@ public interface GameConstants {
 	
 	/**Defines the state ID for when the game is over*/
 	public static final int GAME_OVER = 2;
+	
 	
 	//Enemy default point values
 	/**Defines the point value for the Wanderer type enemy*/

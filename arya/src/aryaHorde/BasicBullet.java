@@ -50,8 +50,8 @@ public class BasicBullet implements GameConstants{
 	 * @param delta		The rate of change to update the bullet's position by
 	 */
 	public void update(int delta) {
-		xPos += Math.cos(angle) * delta;
-		yPos += Math.sin(angle) * delta;
+		xPos += Math.cos(-angle * 2) * delta;
+		yPos += Math.sin(-angle * 2) * delta;
 	}
 	
 	/**
