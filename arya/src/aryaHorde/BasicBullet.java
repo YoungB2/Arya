@@ -18,16 +18,14 @@ public class BasicBullet implements GameConstants{
 	/**The first y position of the bullet*/
 	public float initialY;
 	
-	/**The scalar y direction of the bullet, either one or negative one*/
-	private int yDirection;
-	/**The scalar x direction of the bullet, either one or negative one*/
-	private int xDirection;
 	/**The change in x direction between the points x2 and x1*/
 	private float deltaX;
 	/**The change in y direction between the points y2 and y1*/
 	private float deltaY;
 	/**The value of change in y over change in x of the bullet*/
 	private float slope;
+	
+	private double angle;
 	
 	/**
 	 * The constructor for a BasicBullet object
@@ -40,22 +38,11 @@ public class BasicBullet implements GameConstants{
 		deltaX = x2 - x1;
 		deltaY = y2 - y1;
 		slope = deltaX / deltaY;
+		angle = Math.atan(slope);
 		xPos = x1;
 		yPos = y1;
 		initialX = x1;
 		initialY = y1;
-		
-		if (x2 > (CENTERED_X)) {
-			xDirection = 1;
-		} else {
-			xDirection = -1;
-		}
-		
-		if (y2 > CENTERED_Y) {
-			yDirection = 1;
-		} else { 
-			yDirection = -1;
-		}
 	}
 	
 	/**
@@ -63,16 +50,8 @@ public class BasicBullet implements GameConstants{
 	 * @param delta		The rate of change to update the bullet's position by
 	 */
 	public void update(int delta) {
-		if (xDirection > 0) {
-			xPos += delta * .5f;
-		} else {
-			xPos -= delta * .5f;
-		}
-		
-		if (yDirection > 0) {
-			yPos += (delta * slope);
-		} else
-			yPos -= (delta * slope);
+		xPos += Math.cos(angle) * delta;
+		yPos += Math.sin(angle) * delta;
 	}
 	
 	/**

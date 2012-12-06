@@ -58,11 +58,17 @@ public class Play extends BasicGameState implements GameConstants {
 	/**Tracks the player's collision with the lower border of the world*/
 	private float bottomCollision;
 	
+	/**Tracks the number of enemies alive on the board*/
+	private int livingEnemies = 0;
+	
 	//Game objects
 	/**An array list to track the active BasicBullets in the game*/
 	private CopyOnWriteArrayList<BasicBullet> playerProjectiles;
 	
+	/**An array list to track the active enemy Wanderers in the game*/
+	private CopyOnWriteArrayList<Wanderer> wanderers;
 	
+	private Wanderer myFirstEnemy;
 	
 	/**
 	 * The constructor for the Play game state
@@ -107,6 +113,20 @@ public class Play extends BasicGameState implements GameConstants {
 		bottomCollision = (CENTERED_Y * 2) - movingDown.getHeight();
 		
 		playerProjectiles = new CopyOnWriteArrayList<BasicBullet>();
+		wanderers = new CopyOnWriteArrayList<Wanderer>();
+		
+		
+		
+		myFirstEnemy = new Wanderer((float)50, (float)50, (float)1, (float)-1);
+		wanderers.add(myFirstEnemy);
+		livingEnemies++;
+		
+		//TODO fix initialization of the wanderers
+		 while (livingEnemies < MAX_ENEMIES) {
+			wanderers.add(new Wanderer());
+			livingEnemies++;
+		} 
+		
 	}
 
 	/**
@@ -143,6 +163,10 @@ public class Play extends BasicGameState implements GameConstants {
 				bullet.draw(g);
 			}
 		} 
+		 
+		for(Wanderer wanderer : wanderers) {
+			wanderer.draw(g);
+		}
 	}
 
 	/**
@@ -163,6 +187,7 @@ public class Play extends BasicGameState implements GameConstants {
 		int posX = Mouse.getX();
 		int posY = HEIGHT - Mouse.getY();
 		int bulletID = 0;
+		int wandererID = 0;
 		
 		if(input.isKeyDown(Input.KEY_W)) {						//Move up
 			player = movingUp;
@@ -261,11 +286,34 @@ public class Play extends BasicGameState implements GameConstants {
 		
 		
 		if(input.isMouseButtonDown(0)) {
-			//TODO This is that pain in my neck
+			//TODO Fix this pain in my neck, get the bullets to draw all the way
 			if(playerProjectiles != null) {
-				playerProjectiles.add(new BasicBullet(playerX + (player.getWidth() / 2), 
-						playerY + (player.getHeight() / 2), Math.abs(posX - WIDTH), 
-						Math.abs(posY - HEIGHT)));
+				playerProjectiles.add(new BasicBullet(
+						playerX + (player.getWidth() / 2), 			//x1
+						playerY + (player.getHeight() / 2),			//y1
+						posX,					 					//x2
+						posY));										//y2
+			}
+		}
+		
+		//TODO Make the wanderers bounded by the image, but not the camera
+		for(Wanderer wanderer : wanderers) {
+			wanderer.update(delta);
+			if(wanderer.xPosition < 15 || wanderer.xPosition > WIDTH - 15) {
+				wanderer.invertXVelocity();
+			}
+			if(wanderer.yPosition < 15 || wanderer.yPosition > HEIGHT - 15) {
+				wanderer.invertYVelocity();
+			}
+			for(BasicBullet bullet : playerProjectiles) {
+				if(bullet.xPos > wanderer.xPosition - 15 && bullet.xPos < wanderer.xPosition + 15
+						&& bullet.yPos > wanderer.yPosition - 15 && bullet.yPos < wanderer.yPosition +15) {
+					wandererID = wanderers.indexOf(wanderer);
+					wanderers.remove(wandererID);
+					bulletID = playerProjectiles.indexOf(bullet);
+					playerProjectiles.remove(bulletID);
+					livingEnemies--;
+				}
 			}
 		}
 		

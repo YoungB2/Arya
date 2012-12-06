@@ -6,19 +6,27 @@ package aryaHorde;
  *
  */
 public interface GameConstants {
+	
 	/**Defines the String name of the game*/
 	public static final String GAME_NAME = "Project Arya";
 	
 	/**Defines the width of the game window*/
 	public static final int WIDTH = 1024;
+	
 	/**Defines the height of the game window*/
 	public static final int HEIGHT = 720;
+	
 	/**Defines the center of the game window on the x axis*/
 	public static final int CENTERED_X = WIDTH / 2;
+	
 	/**Defines the center of the game window on the y axis*/
 	public static final int CENTERED_Y = HEIGHT / 2;
+	
 	/**Defines the desired frame rate for the game to run at*/
 	public static final int FRAME_RATE = 60;
+	
+	/**Defines the maximum number of enemies in the game world*/
+	public static final int MAX_ENEMIES = 20;
 	
 	//State IDs
 	/**Defines the state ID for the primary game menu*/

@@ -6,16 +6,18 @@ import org.newdawn.slick.Graphics;
  * An abstract class that defines the common fields and methods of any enemy in the game
  * @author Bryan Young
  */
-public abstract class Enemy {
+public abstract class Enemy implements GameConstants {
 	
 	/**The scalar x direction of the enemy, either one or negative one*/
 	protected float velocityX;
 	/**The scalar y direction of the enemy, either one or negative one*/
 	protected float velocityY;
 	/**The x axis location of the enemy in relation to the world map*/
-	protected float xPosition;
+	public float xPosition;
 	/**The y axis location of the enemy in relation to the world map*/
-	protected float yPosition;
+	public float yPosition;
+	/**The number of points this enemy is worth when killed*/
+	public int points;
 	
 	/**
 	 * Inverts the enemy's x velocity, multiplying by negative one
