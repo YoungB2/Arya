@@ -1,7 +1,5 @@
 package aryaHorde;
 
-import java.util.Random;
-
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.geom.Polygon;
 
@@ -16,40 +14,13 @@ public class Wanderer extends Enemy {
 	
 	private Polygon wandererTop, wandererRight, wandererBottom, wandererLeft;
 	
-	
-	//TODO fix the random spawning of the enemies in the default constructor
-	
 	/**
-	 * Constructor that initializes the Wanderer enemy at the location
-	 * @param x 	The x location of the Wanderer
-	 * @param y		The y location of the Wanderer
+	 * Constructs a Wanderer type enemy at the given location with the given velocities
+	 * @param x1		The initial x position
+	 * @param y1		The initial y position
+	 * @param vX		The initial x velocity
+	 * @param vY		The initial y velocity
 	 */
-	public Wanderer() {
-		Random xRand = new Random(WIDTH);
-		Random yRand = new Random(HEIGHT);
-		Random xDirectionalRand = new Random(1);
-		Random yDirectionalRand = new Random(1);
-		int xInitialVelocity = xDirectionalRand.nextInt(2);
-		int yInitialVelocity = yDirectionalRand.nextInt(2);
-		
-		points = WANDERER_POINTS;
-		xPosition = xRand.nextInt(WIDTH) + 1;
-		yPosition = yRand.nextInt(HEIGHT) + 1;
-		setGraphics();
-		
-		if(xInitialVelocity > 0) {
-			velocityX = 1;
-		} else {
-			velocityX = -1;
-		}
-		
-		if(yInitialVelocity > 0) {
-			velocityY = 1;
-		} else {
-			velocityY = -1;
-		}
-	}
-	
 	public Wanderer(float x1, float y1, float vX, float vY) {
 		xPosition = x1;
 		yPosition = y1;
