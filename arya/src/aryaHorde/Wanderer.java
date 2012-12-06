@@ -13,7 +13,7 @@ import org.newdawn.slick.geom.Polygon;
 public class Wanderer extends Enemy {
 	
 	private Polygon wandererTop, wandererRight, wandererBottom, wandererLeft;
-	
+
 	/**
 	 * Constructs a Wanderer type enemy at the given location with the given velocities
 	 * @param x1		The initial x position

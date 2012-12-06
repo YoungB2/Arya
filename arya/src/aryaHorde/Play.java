@@ -18,8 +18,8 @@ public class Play extends BasicGameState implements GameConstants {
 	/**Tracks the ID value of this game state*/
 	int ID;
 	
-	/**The graphical components of the player*/
-	private Animation player, movingUp, movingDown, movingLeft, movingRight;
+	private Player player;
+	
 	private Image worldMap;
 	
 	//private int worldHeight;
@@ -40,10 +40,10 @@ public class Play extends BasicGameState implements GameConstants {
 	/**Tracks whether or not the game has been paused*/
 	private boolean quitGame = false;
 	
-	//how long each image will last (200 = 2/10 of a second)
-	private int[] duration = {200, 200};
 	/**Tracks the score of the player during the game*/
 	private int score;
+	
+	
 	
 	//Camera and player tracking variables
 	/**Tracks the camera's x position*/
@@ -52,11 +52,7 @@ public class Play extends BasicGameState implements GameConstants {
 	/**Tracks the camera's y position*/
 	private float cameraY = 0;
 	
-	/**Track's the player's x position within the camera view*/
-	private float playerX = WIDTH/2;
 	
-	/**Track's the player's y position within the camera view*/
-	private float playerY = HEIGHT/2;
 	
 	//Border collision detection variables
 	/**Tracks the camera collision with the lower portion of the world image*/
@@ -102,29 +98,14 @@ public class Play extends BasicGameState implements GameConstants {
 		score = 0;
 		
 		worldMap = new Image(FIRST_MAP_RES);
-		//worldWidth = worldMap.getWidth();
-		//worldHeight = worldMap.getHeight();
 		
-		Image[] walkUp = {new Image("res/bucky/buckysBack.png"), 
-				new Image("res/bucky/buckysBack.png")};
-		Image[] walkDown = {new Image("res/bucky/buckysFront.png"), 
-				new Image("res/bucky/buckysFront.png")};
-		Image[] walkLeft = {new Image("res/bucky/buckysLeft.png"), 
-				new Image("res/bucky/buckysLeft.png")};
-		Image[] walkRight = {new Image("res/bucky/buckysRight.png"), 
-				new Image("res/bucky/buckysRight.png")};
+		player = new Player();
 		
-		movingUp = new Animation(walkUp, duration, false);
-		movingDown = new Animation(walkDown, duration, false);
-		movingLeft = new Animation(walkLeft, duration, false);
-		movingRight = new Animation(walkRight, duration, false);
+		sideCollisionShift = (-1 * worldMap.getWidth() + CENTERED_X * 2 + player.getRightSpriteWidth());
+		bottomCollisionShift = (-1 * worldMap.getHeight() + CENTERED_Y * 2 + player.getDownSpriteHeight());
 		
-		player = movingDown;
-		
-		sideCollisionShift = (-1 * worldMap.getWidth() + CENTERED_X * 2 + movingRight.getWidth());
-		bottomCollisionShift = (-1 * worldMap.getHeight() + CENTERED_Y * 2 + movingDown.getHeight());
-		sideCollision = (CENTERED_X * 2) - movingRight.getWidth();
-		bottomCollision = (CENTERED_Y * 2) - movingDown.getHeight();
+		sideCollision = (CENTERED_X * 2) - player.getRightSpriteWidth();
+		bottomCollision = (CENTERED_Y * 2) - player.getDownSpriteHeight();
 		
 		livingEnemies = 0;
 		
@@ -141,14 +122,17 @@ public class Play extends BasicGameState implements GameConstants {
 	 * Initializes a Wanderer type enemy
 	 */
 	private void initWanderer() {
+		
 		initXVelocityRand = new Random();
 		initYVelocityRand = new Random();
 		xRand = new Random();
 		yRand = new Random();
+		
 		initXVelocity = initXVelocityRand.nextInt(2);
 		initYVelocity = initYVelocityRand.nextInt(2);
 		initX = xRand.nextInt(WIDTH);
-		initY = yRand.nextInt(HEIGHT);
+		initY = yRand.nextInt(HEIGHT)
+				;
 		wanderers.add(new Wanderer(initX, initY, initXVelocity, initYVelocity));
 		livingEnemies++;
 	}
@@ -167,11 +151,11 @@ public class Play extends BasicGameState implements GameConstants {
 		worldMap.draw(cameraX, cameraY);
 		g.drawString("Camera is at x: " + cameraX 
 				+ " y: " + cameraY, 20, HEIGHT - 20);
-		g.drawString("Player is at x: " +  playerX 
-				+ " y: " + playerY, 20, HEIGHT - 40);
+		g.drawString("Player is at x: " +  player.playerX 
+				+ " y: " + player.playerY, 20, HEIGHT - 40);
 		g.drawString(mouse, 20, HEIGHT - 60);
 		g.drawString("SCORE: " + score, 10, 30);
-		player.draw(playerX, playerY);
+		player.render(g);
 		
 		if(quitGame) {
 			g.drawString("Resume (R)", 250, 100);
@@ -219,77 +203,77 @@ public class Play extends BasicGameState implements GameConstants {
 		
 		
 		if(input.isKeyDown(Input.KEY_W)) {						//Move up
-			player = movingUp;
+			player.setPlayerUp();
 			
 			if (cameraY < 0) {									//Track camera up
 				//move camera
 				cameraY += delta * .1f;
 				if (cameraY < bottomCollisionShift) {			//Lock camera, move player up (top border)
 					cameraY -= delta * .1f;
-					playerY -= delta * .1f;
-				} else if (playerY > CENTERED_Y ) {				//lock camera, move player up. (lower border)
-					playerY -= delta * .1f;
+					player.movePlayerUp(delta);
+				} else if (player.playerY > CENTERED_Y ) {		//lock camera, move player up. (lower border)
+					player.movePlayerUp(delta);
 					cameraY -= delta * .1f;
 				}
 			} else {											//Move player towards top border, collide with border
-				playerY -= delta * .1f;
-				if (playerY <= 0) { 
-					playerY += delta * .1f; 
+				player.movePlayerUp(delta);
+				if (player.playerY <= 0) { 
+					player.movePlayerDown(delta); 
 				}
 			}
 		}
 		
 		if(input.isKeyDown(Input.KEY_A)) {						//Move left
-			player = movingLeft;
+			player.setPlayerLeft();
 			
 			if (cameraX < 0) {									//Track camera left
 				cameraX += delta *.1f;
-				if(playerX > CENTERED_X) {						//lock camera, move player left (far side)
-					playerX -= delta * .1f;
+				if(player.playerX > CENTERED_X) {						//lock camera, move player left (far side)
+					player.movePlayerLeft(delta);
 					cameraX -= delta * .1f;
 				}
 			} else {											//Move player towards left border, collide with border
-				playerX -= delta * .1f;
-				if (playerX <= 0) {
-					playerX += delta * .1f;
+				player.movePlayerLeft(delta);
+				if (player.playerX <= 0) {
+					player.movePlayerRight(delta);
 				}
 			}
 		}
 		
 		if(input.isKeyDown(Input.KEY_S)) {						//Move down
 			
-			player = movingDown;
+			player.setPlayerDown();
 			
 			if (cameraY > bottomCollisionShift) {				//Track camera down
 				cameraY -= delta * .1f;
-				if (cameraY < bottomCollisionShift - playerY) {	//Lock camera, move player down (towards bottom)
+				if (cameraY < bottomCollisionShift - player.getDownSpriteHeight()) {	//Lock camera, move player down (towards bottom)
 					cameraY += delta * .1f;
-					playerY -= delta * .1f;
-				} else if (playerY < CENTERED_Y) {				//Lock camera, move player down (top)
-					playerY += delta * .1f;
+					player.movePlayerDown(delta);
+				} else if (player.playerY < CENTERED_Y) {				//Lock camera, move player down (top)
+					player.movePlayerDown(delta);
 					cameraY += delta * .1f;
 				} 
 			} else {											//Move player down, collide with bottom
-				playerY += delta * .1f;
-				if (playerY >= bottomCollision) {
-					playerY -= delta * .1f;
+				player.movePlayerDown(delta);
+				if (player.playerY >= bottomCollision) {
+					player.movePlayerUp(delta);
 				}
 			}
 		}
 		
 		if(input.isKeyDown(Input.KEY_D)) {						//Move right
-			player = movingRight;
+			player.setPlayerRight();
 			
 			if (cameraX > sideCollisionShift) {					//Track camera right
 				cameraX -= delta *.1f;
-				if(playerX < CENTERED_X) {						//Lock camera, move player right (near side)
-					playerX += delta * .1f;
+				if(player.playerX < CENTERED_X) {						//Lock camera, move player right (near side)
+					player.movePlayerRight(delta);
 					cameraX += delta * .1f;
 				} 
 			} else {											//Move player right, collide with far side border
-				playerX += delta * .1f;
-				if (playerX >= sideCollision) {							
-					playerX -= delta * .1f;
+				player.movePlayerRight(delta);
+				if (player.playerX >= sideCollision) {							
+					player.movePlayerLeft(delta);
 				}
 			}
 		}
@@ -322,8 +306,8 @@ public class Play extends BasicGameState implements GameConstants {
 			//TODO Fix this pain in my neck, get the bullets to draw all the way
 			if(playerProjectiles != null) {
 				playerProjectiles.add(new BasicBullet(
-						playerX + (player.getWidth() / 2), 			//x1
-						playerY + (player.getHeight() / 2),			//y1
+						player.getCenterX(), 						//x1
+						player.getCenterY(),						//y1
 						posX,					 					//x2
 						posY));										//y2
 			}
@@ -352,6 +336,11 @@ public class Play extends BasicGameState implements GameConstants {
 				}
 			}
 			
+			//TODO test player collision
+			if(player.collision(wanderer.xPosition, wanderer.yPosition)) {
+				game.enterState(GAME_OVER);
+			}
+			
 			for(BasicBullet bullet : playerProjectiles) {							//Collision with bullets
 				if(bullet.xPos > wanderer.xPosition - 15 
 						&& bullet.xPos < wanderer.xPosition + 15
@@ -378,7 +367,7 @@ public class Play extends BasicGameState implements GameConstants {
 
 	/**
 	 * Gets the ID of this game state
-	 * @return ID		The ID of this game state
+	 * @return ID		The {@link #ID} of this game state
 	 */
 	@Override
 	public int getID() {
