@@ -9,9 +9,9 @@ import org.newdawn.slick.Graphics;
 public abstract class Enemy implements GameConstants {
 	
 	/**The scalar x direction of the enemy, either one or negative one*/
-	protected float velocityX;
+	public float velocityX;
 	/**The scalar y direction of the enemy, either one or negative one*/
-	protected float velocityY;
+	public float velocityY;
 	/**The x axis location of the enemy in relation to the world map*/
 	public float xPosition;
 	/**The y axis location of the enemy in relation to the world map*/

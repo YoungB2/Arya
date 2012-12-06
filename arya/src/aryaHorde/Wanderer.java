@@ -32,7 +32,7 @@ public class Wanderer extends Enemy {
 		int xInitialVelocity = xDirectionalRand.nextInt(2);
 		int yInitialVelocity = yDirectionalRand.nextInt(2);
 		
-		points = 25;
+		points = WANDERER_POINTS;
 		xPosition = xRand.nextInt(WIDTH) + 1;
 		yPosition = yRand.nextInt(HEIGHT) + 1;
 		setGraphics();
@@ -55,6 +55,7 @@ public class Wanderer extends Enemy {
 		yPosition = y1;
 		velocityX = vX;
 		velocityY = vY;
+		points = WANDERER_POINTS;
 	}
 	
 	/**

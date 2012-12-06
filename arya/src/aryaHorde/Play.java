@@ -1,5 +1,6 @@
 package aryaHorde;
 
+import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.lwjgl.input.Mouse;
@@ -20,6 +21,18 @@ public class Play extends BasicGameState implements GameConstants {
 	/**The graphical components of the player*/
 	private Animation player, movingUp, movingDown, movingLeft, movingRight;
 	private Image worldMap;
+	
+	//private int worldHeight;
+	//private int worldWidth;
+	
+	private Random xRand;
+	private Random yRand;
+	private Random initXVelocityRand;
+	private Random initYVelocityRand;
+	private float initX;
+	private float initY;
+	private float initXVelocity;
+	private float initYVelocity;
 	
 	/**Tracks graphical debug information for the location of the mouse*/
 	String mouse;
@@ -59,7 +72,7 @@ public class Play extends BasicGameState implements GameConstants {
 	private float bottomCollision;
 	
 	/**Tracks the number of enemies alive on the board*/
-	private int livingEnemies = 0;
+	private int livingEnemies;
 	
 	//Game objects
 	/**An array list to track the active BasicBullets in the game*/
@@ -67,8 +80,6 @@ public class Play extends BasicGameState implements GameConstants {
 	
 	/**An array list to track the active enemy Wanderers in the game*/
 	private CopyOnWriteArrayList<Wanderer> wanderers;
-	
-	private Wanderer myFirstEnemy;
 	
 	/**
 	 * The constructor for the Play game state
@@ -90,7 +101,10 @@ public class Play extends BasicGameState implements GameConstants {
 		
 		score = 0;
 		
-		worldMap = new Image("res/background/oneLifeBG.png");
+		worldMap = new Image(FIRST_MAP_RES);
+		//worldWidth = worldMap.getWidth();
+		//worldHeight = worldMap.getHeight();
+		
 		Image[] walkUp = {new Image("res/bucky/buckysBack.png"), 
 				new Image("res/bucky/buckysBack.png")};
 		Image[] walkDown = {new Image("res/bucky/buckysFront.png"), 
@@ -112,23 +126,33 @@ public class Play extends BasicGameState implements GameConstants {
 		sideCollision = (CENTERED_X * 2) - movingRight.getWidth();
 		bottomCollision = (CENTERED_Y * 2) - movingDown.getHeight();
 		
+		livingEnemies = 0;
+		
 		playerProjectiles = new CopyOnWriteArrayList<BasicBullet>();
 		wanderers = new CopyOnWriteArrayList<Wanderer>();
 		
-		
-		
-		myFirstEnemy = new Wanderer((float)50, (float)50, (float)1, (float)-1);
-		wanderers.add(myFirstEnemy);
-		livingEnemies++;
-		
-		//TODO fix initialization of the wanderers
-		 while (livingEnemies < MAX_ENEMIES) {
-			wanderers.add(new Wanderer());
-			livingEnemies++;
+		for (int i = livingEnemies; i < MAX_ENEMIES; i++) {
+			initWanderer();
 		} 
 		
 	}
 
+	/**
+	 * Initializes a Wanderer type enemy
+	 */
+	private void initWanderer() {
+		initXVelocityRand = new Random();
+		initYVelocityRand = new Random();
+		xRand = new Random();
+		yRand = new Random();
+		initXVelocity = initXVelocityRand.nextInt(2);
+		initYVelocity = initYVelocityRand.nextInt(2);
+		initX = xRand.nextInt(WIDTH);
+		initY = yRand.nextInt(HEIGHT);
+		wanderers.add(new Wanderer(initX, initY, initXVelocity, initYVelocity));
+		livingEnemies++;
+	}
+	
 	/**
 	 * Renders all graphical components of this game state.
 	 * @param container		The GameContainer for this state
@@ -188,6 +212,11 @@ public class Play extends BasicGameState implements GameConstants {
 		int posY = HEIGHT - Mouse.getY();
 		int bulletID = 0;
 		int wandererID = 0;
+		
+		if(livingEnemies < MAX_ENEMIES) {
+			initWanderer();
+		}
+		
 		
 		if(input.isKeyDown(Input.KEY_W)) {						//Move up
 			player = movingUp;
@@ -277,7 +306,11 @@ public class Play extends BasicGameState implements GameConstants {
 		//Terminate projectile at camera borders
 		if (playerProjectiles != null) {
 			for(BasicBullet bullet : playerProjectiles) {
-				if (bullet.xPos < 0 || bullet.yPos < 0 || bullet.xPos > WIDTH || bullet.yPos > HEIGHT) {
+				if (bullet.xPos < 0 
+						|| bullet.yPos < 0 
+						|| bullet.xPos > WIDTH 
+						|| bullet.yPos > HEIGHT) {
+					
 					bulletID = playerProjectiles.indexOf(bullet);
 					playerProjectiles.remove(bulletID);
 				}
@@ -296,27 +329,51 @@ public class Play extends BasicGameState implements GameConstants {
 			}
 		}
 		
-		//TODO Make the wanderers bounded by the image, but not the camera
+		//Update wanderers
 		for(Wanderer wanderer : wanderers) {
+
 			wanderer.update(delta);
-			if(wanderer.xPosition < 15 || wanderer.xPosition > WIDTH - 15) {
+			
+			if(wanderer.xPosition < 15 || wanderer.xPosition > WIDTH - 15) {		//Collision with X borders
 				wanderer.invertXVelocity();
 			}
-			if(wanderer.yPosition < 15 || wanderer.yPosition > HEIGHT - 15) {
+			if(wanderer.yPosition < 15 || wanderer.yPosition > HEIGHT - 15) {		//Collision with Y borders
 				wanderer.invertYVelocity();
 			}
-			for(BasicBullet bullet : playerProjectiles) {
-				if(bullet.xPos > wanderer.xPosition - 15 && bullet.xPos < wanderer.xPosition + 15
-						&& bullet.yPos > wanderer.yPosition - 15 && bullet.yPos < wanderer.yPosition +15) {
-					wandererID = wanderers.indexOf(wanderer);
+			
+			if(wanderer.xPosition < 0 || wanderer.xPosition > WIDTH 
+					|| wanderer.yPosition < 0 || wanderer.yPosition > HEIGHT) {		//Check for escapees
+				
+				wandererID = wanderers.indexOf(wanderer);
+				
+				if(wandererID != -1) {												//Make sure it exists, then kill
 					wanderers.remove(wandererID);
-					bulletID = playerProjectiles.indexOf(bullet);
-					playerProjectiles.remove(bulletID);
 					livingEnemies--;
 				}
 			}
+			
+			for(BasicBullet bullet : playerProjectiles) {							//Collision with bullets
+				if(bullet.xPos > wanderer.xPosition - 15 
+						&& bullet.xPos < wanderer.xPosition + 15
+						&& bullet.yPos > wanderer.yPosition - 15 
+						&& bullet.yPos < wanderer.yPosition +15) {
+					
+					score += wanderer.points;										//Increase points
+					
+					wandererID = wanderers.indexOf(wanderer);						
+					
+					if(wandererID != -1) {											//Make sure it exists, then kill
+						wanderers.remove(wandererID);
+						livingEnemies--;
+					}
+					
+					bulletID = playerProjectiles.indexOf(bullet);					//Terminate expended bullet
+					if(bulletID != -1) {
+						playerProjectiles.remove(bulletID);
+					}
+				}
+			}
 		}
-		
 	}
 
 	/**

@@ -26,11 +26,25 @@ public interface GameConstants {
 	public static final int FRAME_RATE = 60;
 	
 	/**Defines the maximum number of enemies in the game world*/
-	public static final int MAX_ENEMIES = 20;
+	public static final int MAX_ENEMIES = 10;
+	
+	
+	//Resource links
+	/**Defines the dynamic location of the first game map*/
+	public static final String FIRST_MAP_RES = "/res/background/oneLifeBG.png";
+	
+	/**Defines the dynamic location of the game over image*/
+	public static final String GAME_OVER_RES = "/res/background/GameOver.png";
 	
 	//State IDs
 	/**Defines the state ID for the primary game menu*/
 	public static final int MENU = 0;
 	/**Defines the state ID for the main game mode*/
 	public static final int PLAY = 1;
+	/**Defines the state ID for when the game is over*/
+	public static final int GAME_OVER = 2;
+	
+	//Enemy default point values
+	/**Defines the point value for the Wanderer type enemy*/
+	public static final int WANDERER_POINTS = 25;
 }

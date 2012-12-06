@@ -21,6 +21,7 @@ public class StateController extends StateBasedGame implements GameConstants {
 		super(name);
 		this.addState(new Menu(MENU));
 		this.addState(new Play(PLAY));
+		this.addState(new GameOver(GAME_OVER));
 	}
 	
 	/**
